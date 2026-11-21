@@ -1,0 +1,7 @@
+pipeline/**/chk_*.png
+pipeline/**/*.wav
+pipeline/**/video_noaudio.mp4
+pipeline/**/*.log
+pipeline/**/url.txt
+pipeline/**/sheet.png
+pipeline/**/s2.png
