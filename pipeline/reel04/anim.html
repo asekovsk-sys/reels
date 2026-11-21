@@ -1,0 +1,169 @@
+<!doctype html>
+<html><head><meta charset="utf-8">
+<style>
+@font-face{font-family:IK;src:url("file:///usr/share/fonts/opentype/inter/Inter-Black.otf")}
+@font-face{font-family:IB;src:url("file:///usr/share/fonts/opentype/inter/Inter-Bold.otf")}
+html,body{margin:0;background:#000}canvas{display:block}
+</style></head><body><canvas id=c width=1080 height=1920></canvas>
+<script>
+const W=1080,H=1920,c=document.getElementById('c'),x=c.getContext('2d');
+const Y='#FFD60A',R='#FF3B30',G='#34C759',BG='#0B0B12';
+// субтитры: [s,e,[[слово,s,e,hl]]]
+const S=[
+[0,2150,[["ТЫ",0,400,"r"],["БЫ",0,600],["СНИМАЛ",0,1000],["ЭТО",0,1200],["НЕДЕЛЮ",0,2100,"r"]]],
+[2200,4050,[["А",2200,2300],["ОН",2300,2400,"y"],["НАПИСАЛ",2400,3000],["ОДНУ",3000,3300,"y"],["ФРАЗУ",3300,4000,"y"]]],
+[4100,6450,[["БЫЛО:",4100,4500],["«КОТ",4600,4900],["НА",4900,5000],["ПЛЯЖЕ»",5000,5600],["—",5600,5600],["СКУЧНО",5700,6400,"r"]]],
+[6500,8550,[["СТАЛО:",6500,7000,"y"],["РЫЖИЙ",7100,7600],["КОТ",7600,7800],["НА",7800,7900],["СКЕЙТЕ",7900,8500]]],
+[8600,10700,[["ЗАКАТ,",8600,9300],["КАМЕРА",9400,9700],["ЛЕТИТ",9700,10000],["СЛЕДОМ",10000,10600,"y"]]],
+[10750,12000,[["ВИДИШЬ",10800,11000],["РАЗНИЦУ?",11000,11500,"y"]]],
+[12050,14650,[["КТО,",12100,12500,"y"],["ГДЕ,",12500,13000,"y"],["ЧТО",13000,13200,"y"],["ДЕЛАЕТ",13200,13800,"y"],["И",13900,14000],["КАМЕРА",14000,14600,"y"]]],
+[14700,15750,[["ВОТ",14700,14900],["И",14900,14900],["ВЕСЬ",14900,15100],["СЕКРЕТ",15100,15700,"g"]]],
+[15800,17550,[["ВСЕ",15800,16100],["НЕЙРОСЕТИ",16100,16600,"y"],["В",16600,16700],["ОДНОМ",16700,17100],["БОТЕ",17100,17500,"y"]]],
+[17600,20000,[["ССЫЛКА",17600,17900,"y"],["В",17900,18000,"y"],["ПРОФИЛЕ",18000,18500,"y"],["—",18500,18500],["ПОПРОБУЙ",18700,19100],["САМ",19100,19400]]],
+];
+const cl=(v,a=0,b=1)=>Math.max(a,Math.min(b,v)), E=t=>1-Math.pow(1-cl(t),3), EB=t=>{t=cl(t);const s=1.7;return 1+(s+1)*Math.pow(t-1,3)+s*Math.pow(t-1,2)};
+function rr(X,Yy,w,h,r){x.beginPath();x.roundRect(X,Yy,w,h,r);}
+function txt(s,X,Yy,sz,col,al='center',f='IK'){x.font=`${sz}px ${f}`;x.textAlign=al;x.textBaseline='middle';x.fillStyle=col;x.fillText(s,X,Yy);}
+function phone(cx,cy,w,h,col,glow){x.save();x.shadowColor=glow;x.shadowBlur=60;rr(cx-w/2,cy-h/2,w,h,48);x.fillStyle='#15151f';x.fill();x.restore();
+ x.lineWidth=6;x.strokeStyle=col;rr(cx-w/2,cy-h/2,w,h,48);x.stroke();}
+function feed(cx,cy,w,h,t,dim){ // бесконечная лента
+ x.save();rr(cx-w/2+14,cy-h/2+14,w-28,h-28,36);x.clip();
+ const off=(t*900)%260;
+ for(let i=-1;i<6;i++){const yy=cy-h/2+30+i*260-off;x.fillStyle=`rgba(255,255,255,${.10*dim})`;rr(cx-w/2+40,yy,w-80,170,22);x.fill();
+  x.fillStyle=`rgba(255,255,255,${.18*dim})`;rr(cx-w/2+40,yy+185,(w-80)*(.4+.3*((i*7+3)%5)/5),20,10);x.fill();}
+ x.restore();}
+function scene(cx,cy,w,h,t){ // «сгенерированное видео»: закат, кот-силуэт на скейте (стилизация)
+ x.save();rr(cx-w/2+14,cy-h/2+14,w-28,h-28,36);x.clip();
+ const g=x.createLinearGradient(0,cy-h/2,0,cy+h/2);g.addColorStop(0,'#2b1055');g.addColorStop(.55,'#ff6b35');g.addColorStop(.56,'#3a1c4a');g.addColorStop(1,'#120818');x.fillStyle=g;x.fillRect(cx-w/2,cy-h/2,w,h);
+ x.fillStyle='#ffd27a';x.beginPath();x.arc(cx,cy+h*.05,w*.22,Math.PI,0);x.fill();
+ for(let i=0;i<8;i++){const yy=cy+h*.08+i*i*9;x.fillStyle='rgba(255,180,90,.35)';x.fillRect(cx-w/2,yy,w,3);}
+ const px=cx-w*.6+((t*260)%(w*1.2)), py=cy+h*.2;
+ x.fillStyle='#0b0612';rr(px-70,py+40,140,14,7);x.fill();x.beginPath();x.arc(px-45,py+62,10,0,7);x.arc(px+45,py+62,10,0,7);x.fill();
+ x.beginPath();x.ellipse(px,py,55,38,0,0,7);x.fill();x.beginPath();x.arc(px+48,py-38,30,0,7);x.fill();
+ x.beginPath();x.moveTo(px+28,py-58);x.lineTo(px+36,py-88);x.lineTo(px+50,py-64);x.moveTo(px+52,py-64);x.lineTo(px+70,py-86);x.lineTo(px+74,py-56);x.fill();
+ x.lineWidth=10;x.strokeStyle='#0b0612';x.beginPath();x.moveTo(px-50,py-10);x.quadraticCurveTo(px-100,py-60,px-80,py-90);x.stroke();
+ x.restore();}
+function label(s,cx,cy,col){x.font='64px IK';const w=x.measureText(s).width+60;rr(cx-w/2,cy-48,w,96,48);x.fillStyle=col;x.fill();txt(s,cx,cy+3,64,'#000');}
+function cross(cx,cy,r,p,col){x.lineWidth=18;x.lineCap='round';x.strokeStyle=col;x.beginPath();const a=cl(p*2),b=cl(p*2-1);
+ x.moveTo(cx-r,cy-r);x.lineTo(cx-r+2*r*a,cy-r+2*r*a);if(b>0){x.moveTo(cx+r,cy-r);x.lineTo(cx+r-2*r*b,cy-r+2*r*b);}x.stroke();}
+function icon(k,cx,cy,s){x.save();x.translate(cx,cy);x.scale(s,s);x.fillStyle='#fff';x.strokeStyle='#fff';x.lineWidth=14;x.lineJoin='round';
+ if(k==0){rr(-120,-70,170,140,24);x.fill();x.beginPath();x.moveTo(60,-20);x.lineTo(130,-60);x.lineTo(130,60);x.lineTo(60,20);x.fill();}
+ if(k==1){x.beginPath();x.arc(-55,50,34,0,7);x.arc(55,50,34,0,7);x.stroke();x.beginPath();x.moveTo(-35,25);x.lineTo(60,-100);x.moveTo(35,25);x.lineTo(-60,-100);x.stroke();}
+ if(k==2){x.beginPath();x.arc(0,-55,50,0,7);x.fill();x.beginPath();x.moveTo(-100,110);x.quadraticCurveTo(0,-30,100,110);x.fill();}
+ x.restore();}
+function subs(ms){const g=S.find(g=>ms>=g[0]-60&&ms<g[1]+150);if(!g)return;
+ const words=g[2];x.font='104px IK';const sp=26;let lines=[[]],lw=[0];
+ for(const w of words){const ww=x.measureText(w[0]).width;if(lw[lw.length-1]+ww>940&&lines[lines.length-1].length){lines.push([]);lw.push(0);}lines[lines.length-1].push([w,ww]);lw[lw.length-1]+=ww+sp;}
+ const base=1530-(lines.length-1)*62, k=EB((ms-g[0]+60)/180);
+ lines.forEach((ln,li)=>{let X=540-(lw[li]-sp)/2;for(const [w,ww] of ln){const on=ms>=w[1]-40, sc=on?1:.92;
+  const col=!on?'rgba(255,255,255,.55)':w[3]=='y'?Y:w[3]=='r'?R:w[3]=='g'?G:'#fff';
+  x.save();x.translate(X+ww/2,base+li*124);x.scale(sc*(.85+.15*k),sc*(.85+.15*k));x.lineWidth=16;x.lineJoin='round';x.strokeStyle='#000';x.font='104px IK';x.textAlign='center';x.textBaseline='middle';x.strokeText(w[0],0,0);x.fillStyle=col;x.fillText(w[0],0,0);x.restore();X+=ww+sp;}});}
+
+function bgFx(t){x.fillStyle=BG;x.fillRect(0,0,W,H);const g=x.createRadialGradient(540,700,50,540,700,1100);g.addColorStop(0,'rgba(80,60,160,.35)');g.addColorStop(1,'rgba(0,0,0,0)');x.fillStyle=g;x.fillRect(0,0,W,H);
+ for(let i=0;i<40;i++){const px=(i*277)%W,py=(i*613+t*40*(1+i%3))%H;x.fillStyle='rgba(255,255,255,.06)';x.fillRect(px,H-py,4,4);}}
+// яркая сцена (стилизация, рисованная кодом): закат, кот на скейте; cam — проезд камеры
+function vivid(X,Yy,w,h,t,cam){x.save();rr(X,Yy,w,h,40);x.clip();
+ const g=x.createLinearGradient(0,Yy,0,Yy+h);g.addColorStop(0,'#2b1055');g.addColorStop(.5,'#ff6b35');g.addColorStop(.58,'#ff9f43');g.addColorStop(.59,'#3a1c4a');g.addColorStop(1,'#120818');x.fillStyle=g;x.fillRect(X,Yy,w,h);
+ const sx=X+w*.5-cam*40, hz=Yy+h*.59;
+ x.save();x.shadowColor='#ffcf6b';x.shadowBlur=80;x.fillStyle='#ffd27a';x.beginPath();x.arc(sx,hz,w*.2,Math.PI,0);x.fill();x.restore();
+ for(let i=0;i<9;i++){const yy=hz+6+i*i*7;x.fillStyle=`rgba(255,180,90,${.4-i*.035})`;x.fillRect(X,yy,w,3);}
+ // пальмы-силуэты с параллаксом
+ for(let i=0;i<4;i++){const px=X+((i*w*.42-cam*260*(1+i%2))%(w*1.6)+w*1.6)%(w*1.6)-w*.3, ph=h*(.32+.08*(i%2));
+  x.strokeStyle='#160a1c';x.lineWidth=14;x.beginPath();x.moveTo(px,hz+10);x.quadraticCurveTo(px+20,hz-ph*.5,px+8,hz-ph);x.stroke();
+  x.fillStyle='#160a1c';for(let a=0;a<5;a++){x.beginPath();x.ellipse(px+8+Math.cos(a*1.3)*55,hz-ph+Math.sin(a*1.3)*10,70,14,a*1.3,0,7);x.fill();}}
+ // кот на скейте
+ const px=X+w*.5+Math.sin(t*2)*w*.05, py=Yy+h*.74+Math.sin(t*9)*4;
+ x.fillStyle='#ff8a1f';x.beginPath();x.ellipse(px,py,58,40,0,0,7);x.fill();x.beginPath();x.arc(px+50,py-40,32,0,7);x.fill();
+ x.beginPath();x.moveTo(px+28,py-60);x.lineTo(px+36,py-92);x.lineTo(px+52,py-66);x.moveTo(px+54,py-66);x.lineTo(px+72,py-90);x.lineTo(px+78,py-58);x.fill();
+ x.strokeStyle='#ff8a1f';x.lineWidth=12;x.lineCap='round';x.beginPath();x.moveTo(px-52,py-8);x.quadraticCurveTo(px-104,py-60,px-84,py-92);x.stroke();
+ x.fillStyle='#111';rr(px+40,py-50,46,14,6);x.fill(); // очки
+ x.fillStyle='#ffe';x.beginPath();x.arc(px+58,py-34,3,0,7);x.fill();
+ x.fillStyle='#1a1a1a';rr(px-76,py+42,152,14,7);x.fill();x.fillStyle='#7cf';x.beginPath();x.arc(px-48,py+64,11,0,7);x.arc(px+48,py+64,11,0,7);x.fill();
+ // линии скорости
+ for(let i=0;i<7;i++){const ly=Yy+h*.62+i*h*.05,lx=X+((i*173-t*900)%w+w)%w;x.fillStyle='rgba(255,255,255,.25)';x.fillRect(lx,ly,120,4);}
+ // виньетка
+ const v=x.createRadialGradient(X+w/2,Yy+h/2,h*.25,X+w/2,Yy+h/2,h*.8);v.addColorStop(0,'rgba(0,0,0,0)');v.addColorStop(1,'rgba(0,0,0,.55)');x.fillStyle=v;x.fillRect(X,Yy,w,h);
+ x.restore();}
+// скучная сцена: серый пляж, статичный кот
+function dull(X,Yy,w,h,t){x.save();rr(X,Yy,w,h,40);x.clip();
+ x.fillStyle='#9aa3ab';x.fillRect(X,Yy,w,h*.5);x.fillStyle='#7d868e';x.fillRect(X,Yy+h*.5,w,h*.12);x.fillStyle='#b9b2a3';x.fillRect(X,Yy+h*.62,w,h*.38);
+ const px=X+w*.5,py=Yy+h*.75;x.fillStyle='#6b6b6b';x.beginPath();x.ellipse(px,py,50,34,0,0,7);x.fill();x.beginPath();x.arc(px+44,py-34,26,0,7);x.fill();
+ x.beginPath();x.moveTo(px+26,py-50);x.lineTo(px+32,py-76);x.lineTo(px+44,py-56);x.moveTo(px+48,py-56);x.lineTo(px+62,py-76);x.lineTo(px+66,py-48);x.fill();
+ x.fillStyle='rgba(0,0,0,.18)';x.fillRect(X,Yy,w,h);x.restore();}
+function frame(X,Yy,w,h,col){x.lineWidth=8;x.strokeStyle=col;rr(X,Yy,w,h,40);x.stroke();}
+function chip(s,cx,cy,col,k){if(k<=0)return;x.save();x.translate(cx,cy);x.scale(k,k);x.font='52px IK';const w=x.measureText(s).width+56;rr(-w/2,-42,w,84,42);x.fillStyle=col;x.fill();txt(s,0,3,52,'#000');x.restore();}
+const PROMPT='рыжий кот на скейте, закат, камера летит следом';
+function calendar(cx,cy,ms){ // 7 дней, зачёркиваются
+ rr(cx-330,cy-230,660,460,36);x.fillStyle='rgba(20,20,30,.88)';x.fill();x.lineWidth=6;x.strokeStyle=R;x.stroke();
+ rr(cx-330,cy-230,660,90,36);x.fillStyle=R;x.fill();txt('7 ДНЕЙ СЪЁМОК',cx,cy-183,50,'#fff');
+ for(let i=0;i<7;i++){const col=i%4,row=Math.floor(i/4),bx=cx-240+col*160,by=cy-60+row*150;
+  rr(bx-60,by-55,120,110,18);x.fillStyle='#2a2a3a';x.fill();txt(String(i+1),bx,by+4,56,'#fff');
+  const p=cl((ms-150-i*230)/200);if(p>0){x.lineWidth=12;x.lineCap='round';x.strokeStyle=R;x.beginPath();x.moveTo(bx-40,by-40);x.lineTo(bx-40+80*p,by-40+80*p);x.stroke();}}}
+function sA(t,ms){ // хук: яркая сцена на фоне + «7 дней съёмок»
+ vivid(60,250,960,1100,t,t);frame(60,250,960,1100,'rgba(255,255,255,.25)');
+ x.fillStyle='rgba(0,0,0,.45)';x.fillRect(60,250,960,1100);
+ const sh=ms<400?Math.sin(t*90)*14*(1-ms/400):0;x.save();x.translate(540+sh,800);calendar(0,0,ms);x.restore();
+ // иконки съёмочной группы
+ [0,1,2].forEach((k2,i)=>{const s=EB((ms-300-i*200)/250)*.45;if(s>0)icon(k2,250+i*290,380,s);});}
+function phone2(cx,cy,w,h){x.save();x.shadowColor='rgba(255,214,10,.5)';x.shadowBlur=60;rr(cx-w/2,cy-h/2,w,h,56);x.fillStyle='#15151f';x.fill();x.restore();x.lineWidth=7;x.strokeStyle=Y;rr(cx-w/2,cy-h/2,w,h,56);x.stroke();}
+function sB(t,ms){ // набор фразы
+ const k=EB((ms-2200)/300);x.save();x.translate(540,800);x.scale(.85+.15*k,.85+.15*k);x.translate(-540,-800);
+ phone2(540,800,620,1040);label('ОН',540,215,Y);
+ rr(290,560,500,330,28);x.fillStyle='#262638';x.fill();
+ const n=Math.floor(cl((ms-2400)/1400)*PROMPT.length);const shown=PROMPT.slice(0,n);
+ x.font='44px IB';x.fillStyle='#fff';x.textAlign='left';x.textBaseline='top';
+ const ws=shown.split(' ');let line='',ly=590;for(const w of ws){if(x.measureText(line+w).width>440){x.fillText(line,320,ly);line='';ly+=58;}line+=w+' ';}
+ x.fillText(line+((Math.floor(t*3)%2)?'|':''),320,ly);
+ rr(380,960,320,100,50);x.fillStyle=ms>3800?Y:'#444';x.fill();txt('СОЗДАТЬ',540,1012,46,'#000');
+ x.restore();}
+function sC(t,ms){ // было
+ label('БЫЛО',540,215,'#8e8e93');
+ const k=E((ms-4100)/300);x.globalAlpha=k;
+ rr(140,330,800,130,30);x.fillStyle='#262638';x.fill();txt('«кот на пляже»',540,398,64,'#ddd','center','IB');
+ dull(90,520,900,800,t);frame(90,520,900,800,'#555');
+ if(ms>5700){const s=EB((ms-5700)/250);x.save();x.translate(540,920);x.rotate(-.18);x.scale(s,s);rr(-250,-75,500,150,20);x.lineWidth=12;x.strokeStyle=R;x.stroke();txt('СКУЧНО',0,6,96,R);x.restore();}
+ x.globalAlpha=1;}
+function sD(t,ms){ // стало
+ label('СТАЛО',540,215,Y);
+ const cam=(ms-6500)/1000, z=1+cl(cam/4)*.06;
+ x.save();x.translate(540,840);x.scale(z,z);x.translate(-540,-840);vivid(60,320,960,1040,t,cam*1.4);x.restore();frame(60,320,960,1040,Y);
+ if(ms<6800){x.fillStyle=`rgba(255,255,255,${(1-cl((ms-6500)/300))*.9})`;x.fillRect(60,320,960,1040);}
+ const ch=[['РЫЖИЙ КОТ',7100,310,530],['НА СКЕЙТЕ',7900,770,530],['ЗАКАТ',8600,310,630],['КАМЕРА СЛЕДОМ',9400,710,630]];
+ ch.forEach(([s,st,cx,cy])=>chip(s,cx,cy,Y,EB((ms-st)/250)));
+ // рамка «камеры»
+ if(ms>9400){x.strokeStyle='rgba(255,255,255,.8)';x.lineWidth=6;const a=12+Math.sin(t*6)*4;for(const [cx,cy,dx,dy] of [[130,400,1,1],[950,400,-1,1],[130,1280,1,-1],[950,1280,-1,-1]]){x.beginPath();x.moveTo(cx,cy+dy*70);x.lineTo(cx,cy);x.lineTo(cx+dx*70,cy);x.stroke();}
+  x.fillStyle=R;x.beginPath();x.arc(190,1220,14,0,7);if(Math.floor(t*2)%2)x.fill();txt('REC',260,1222,34,'#fff','center','IB');}}
+function sE(t,ms){ // сравнение
+ const k=E((ms-10750)/300);
+ x.save();x.translate(0,(1-k)*-80);dull(140,260,800,500,t);frame(140,260,800,500,'#555');chip('БЫЛО',260,320,'#8e8e93',1);x.restore();
+ x.save();x.translate(0,(1-k)*80);vivid(140,800,800,560,t,t);frame(140,800,800,560,Y);chip('СТАЛО',270,860,Y,1);x.restore();}
+function sF(t,ms){ // формула
+ txt('ФОРМУЛА',540,300,60,'#aaa','center','IB');
+ const it=[['КТО',12100,'рыжий кот'],['ГДЕ',12500,'пляж, закат'],['ЧТО ДЕЛАЕТ',13000,'едет на скейте'],['КАМЕРА',14000,'летит следом']];
+ it.forEach(([s,st,ex],i)=>{const k=EB((ms-st)/260);if(k<=0)return;const cy=440+i*200;
+  x.save();x.translate(540,cy);x.scale(k,k);rr(-430,-80,860,160,40);x.fillStyle='#1d1d2b';x.fill();x.lineWidth=5;x.strokeStyle=Y;x.stroke();
+  txt(s,-390,-4,60,Y,'left');txt(ex,390,0,40,'#ccc','right','IB');x.restore();
+  if(i<3){const k2=E((ms-st-200)/200);x.globalAlpha=k2;txt('+',540,cy+100,60,'#fff');x.globalAlpha=1;}});
+ if(ms>14700){const k=EB((ms-14700)/300);x.save();x.translate(540,1280);x.scale(k,k);rr(-300,-60,600,120,60);x.fillStyle=G;x.fill();txt('= ВИДЕО',0,4,64,'#000');x.restore();}}
+function sG(t,ms){ // бот → профиль
+ if(ms<17600){const k=EB((ms-15800)/350);x.save();x.translate(540,760);x.scale(k,k);
+  rr(-400,-300,800,600,50);x.fillStyle='#1d2733';x.fill();x.lineWidth=6;x.strokeStyle='#2AABEE';x.stroke();
+  x.beginPath();x.arc(-300,-200,56,0,7);x.fillStyle='#2AABEE';x.fill();txt('AI',-300,-196,48,'#fff');
+  txt('Бот: все нейросети',-220,-215,40,'#fff','left','IB');txt('в одном месте',-220,-165,40,'#9fb3c8','left','IB');
+  const tags=['ВИДЕО','ФОТО','ТЕКСТ','ГОЛОС'];tags.forEach((s,i)=>chip(s,-190+(i%2)*380,-10+Math.floor(i/2)*150,i==0?Y:'#fff',EB((ms-16100-i*150)/220)));
+  x.restore();}
+ else{const k=EB((ms-17600)/400);x.save();x.translate(540,640);x.scale(k,k);
+  x.beginPath();x.arc(0,0,150,0,7);const g=x.createLinearGradient(-150,-150,150,150);g.addColorStop(0,'#f58529');g.addColorStop(.5,'#dd2a7b');g.addColorStop(1,'#8134af');x.lineWidth=14;x.strokeStyle=g;x.stroke();
+  x.beginPath();x.arc(0,0,128,0,7);x.fillStyle='#1d1d2b';x.fill();txt('AI',0,6,96,Y);x.restore();
+  txt('@889.amrr',540,880,64,'#fff');
+  if(ms>18000){const k2=E((ms-18000)/300);x.globalAlpha=k2;rr(540-330,980,660,130,65);x.fillStyle=Y;x.fill();txt('ССЫЛКА В ПРОФИЛЕ ↑',540,1047,48,'#000');x.globalAlpha=1;}
+  txt('↑',540,380+Math.sin(t*9)*18,110,Y);}}
+const CUTS=[2200,4100,6500,10750,12050,15800,17600];
+function render(t){const ms=t*1000;bgFx(t);
+ if(ms<2200)sA(t,ms);else if(ms<4100)sB(t,ms);else if(ms<6500)sC(t,ms);else if(ms<10750)sD(t,ms);else if(ms<12050)sE(t,ms);else if(ms<15800)sF(t,ms);else sG(t,ms);
+ if(ms<300){x.fillStyle=`rgba(255,255,255,${0})`;}
+ for(const s of CUTS){const d=Math.abs(ms-s);if(d<120){x.fillStyle=`rgba(255,255,255,${(1-d/120)*.5})`;x.fillRect(0,0,W,H);}}
+ if(ms>19500){x.fillStyle=`rgba(0,0,0,${cl((ms-19500)/500)*.8})`;x.fillRect(0,0,W,H);}
+ subs(ms);}
+window.ready=document.fonts.load('104px IK').then(()=>document.fonts.load('34px IB')).then(()=>{render(0);return true});
+</script></body></html>
